@@ -1,0 +1,77 @@
+﻿
+@model DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+@{
+    Layout = "_Layout";
+}
+
+
+<div class="container mt-4">
+    <h1 class="text-center">Dashboard</h1>
+
+    <div class="row text-center">
+        <!-- Clients KPI -->
+        <div class="col-md-4 mb-4">
+            <div class="card kpi-card" id="clientsCard">
+                <div class="card-body">
+                    <h2 class="card-title text-primary" id="clientsCount">0</h2>
+                    <p class="card-text">Clients</p>
+                </div>
+            </div>
+        </div>
+        <!-- Categories KPI -->
+        <div class="col-md-4 mb-4">
+            <div class="card kpi-card" id="categoriesCard">
+                <div class="card-body">
+                    <h2 class="card-title text-success" id="categoriesCount">0</h2>
+                    <p class="card-text">Categories</p>
+                </div>
+            </div>
+        </div>
+        <!-- Invoices KPI -->
+        <div class="col-md-4 mb-4">
+            <div class="card kpi-card" id="invoicesCard">
+                <div class="card-body">
+                    <h2 class="card-title text-danger" id="invoicesCount">0</h2>
+                    <p class="card-text">Invoices</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const clientsCount = document.getElementById('clientsCount');
+            const categoriesCount = document.getElementById('categoriesCount');
+            const invoicesCount = document.getElementById('invoicesCount');
+
+            // Simulate API call and set the KPI values
+            setTimeout(() => {
+                animateValue(clientsCount, 0, @Model.ClientsCount, 2000); // Replace with actual count from Model
+                animateValue(categoriesCount, 0, @Model.CategoriesCount, 2000); // Replace with actual count from Model
+                animateValue(invoicesCount, 0, @Model.InvoicesCount, 2000); // Replace with actual count from Model
+            }, 500);
+        });
+
+        // Function to animate the count-up effect
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                element.textContent = Math.floor(progress * (end - start) + start);
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+    </script>
+}

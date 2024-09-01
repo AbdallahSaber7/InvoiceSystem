@@ -1,0 +1,43 @@
+﻿@model IEnumerable<InvoiceData.Entities.Invoice>
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <h1>Invoices</h1>
+    <a class="btn btn-primary" href="@Url.Action("Create", "Invoices")">Create New Invoice</a>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Invoice ID</th>
+                <th>Client Name</th>
+                <th>Total</th>
+                <th>Actions</th> <!-- New column for the action button -->
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model == null || !Model.Any())
+            {
+                <tr>
+                    <td colspan="4" class="text-center">No invoices available.</td> <!-- Updated colspan -->
+                </tr>
+            }
+            else
+            {
+                @foreach (var invoice in Model)
+                {
+                    <tr>
+                        <td>@invoice.Id</td>
+                        <td>@invoice.Client.Name</td>
+                        <td>@invoice.Total.ToString("C")</td> <!-- Correct display of Total -->
+                        <td>
+                            <a class="btn btn-info" href="@Url.Action("Details", "Invoices", new { id = invoice.Id })">View Details</a> <!-- New button to view details -->
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

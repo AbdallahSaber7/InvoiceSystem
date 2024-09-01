@@ -1,0 +1,24 @@
+﻿@model CreateCategoryViewModel
+
+
+<form id="createCategoryForm" method="post" asp-action="Create" asp-controller="Categories">
+    <div id="validationMessages" class="text-danger"></div>
+
+    <div class="form-group">
+        <label for="Name" class="control-label">Name</label>
+        <input id="Name" name="Name" class="form-control" oninput="validateName()" />
+    </div>
+    <div class="form-group">
+        <label for="Notes" class="control-label">Notes</label>
+        <input id="Notes" name="Notes" class="form-control" />
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Create</button>
+        <button type="button" class="btn btn-secondary" onclick="toggleCreateCategoryForm()">Cancel</button>
+    </div>
+</form>
+
+
+@section Scripts {
+    <script src="~/js/Categories.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,50 @@
+﻿@model InvoiceData.Entities.Invoice
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <h2>Invoice Details</h2>
+
+    <div>
+        <h4>Invoice</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">Invoice ID</dt>
+            <dd class="col-sm-10">@Model.Id</dd>
+
+            <dt class="col-sm-2">Client Name</dt>
+            <dd class="col-sm-10">@Model.Client.Name</dd>
+
+            <dt class="col-sm-2">Total</dt>
+            <dd class="col-sm-10">@Model.Total.ToString("C")</dd>
+        </dl>
+    </div>
+
+    <h4>Invoice Details</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var detail in Model.InvoiceDetails)
+            {
+                <tr>
+                    <td>@detail.Categories.Name</td>
+                    <td>@detail.Quantity</td>
+                    <td>@detail.Price.ToString("C")</td>
+                    <td>@detail.Total.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a class="btn btn-secondary" href="@Url.Action("Index", "Invoices")">Back to List</a>
+</div>
+

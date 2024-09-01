@@ -1,0 +1,140 @@
+﻿@model CreateInvoiceViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <h1>Create New Invoice</h1>
+
+    <form asp-action="Create" method="post">
+        <div class="form-group">
+            <label for="ClientId">Client</label>
+            <select id="ClientId" name="ClientId" class="form-control" required>
+                <option value="">Select a client</option>
+                @foreach (var client in Model.Clients)
+                {
+                    <option value="@client.Value">@client.Text</option>
+                }
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Invoice Details</label>
+            <table class="table" id="invoiceDetailsTable">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <select name="InvoiceDetails[0].CategoryId" class="form-control">
+                                <option value="">Select a category</option>
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <option value="@category.Value">@category.Text</option>
+                                }
+                            </select>
+                        </td>
+                        <td><input type="number" name="InvoiceDetails[0].Quantity" class="form-control" /></td>
+                        <td><input type="number" name="InvoiceDetails[0].Price" class="form-control" step="0.01" /></td>
+                        <td><span class="invoice-detail-total">0.00</span></td>
+                        <td><button type="button" class="btn btn-danger remove-detail">Remove</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- Total Sum Field -->
+           
+            <div class="d-flex justify-content-between align-items-center mt-3" style="height: 50px;">
+                <div class="form-group mb-0" style="margin-bottom: 0;">
+                    <label class="mb-1">Total Invoice Amount</label>
+                    <span id="totalAmount" class="form-control-plaintext" style="font-size: 14px;">0.00</span>
+                </div>
+                <button type="button" class="btn btn-success" id="addDetail" style="height: 38px;">Add Detail</button>
+            </div>
+
+            <div class="d-flex justify-content-between mt-3">
+                <button type="submit" class="btn btn-primary">Create Invoice</button>
+                <a href="@Url.Action("Index", "Invoices")" class="btn btn-secondary mt-3">Cancel</a>
+
+            </div>
+
+
+            
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let detailIndex = 1;
+
+            function calculateTotal(row) {
+                const quantity = parseFloat(row.querySelector('input[name$=".Quantity"]').value) || 0;
+                const price = parseFloat(row.querySelector('input[name$=".Price"]').value) || 0;
+                const total = quantity * price;
+                row.querySelector('.invoice-detail-total').textContent = total.toFixed(2);
+                return total;
+            }
+
+            function updateTotalAmount() {
+                const rows = document.querySelectorAll('#invoiceDetailsTable tbody tr');
+                let grandTotal = 0;
+                rows.forEach(row => {
+                    const rowTotal = parseFloat(row.querySelector('.invoice-detail-total').textContent) || 0;
+                    grandTotal += rowTotal;
+                });
+                document.getElementById('totalAmount').textContent = grandTotal.toFixed(2);
+            }
+
+            // Update total when quantity or price changes
+            document.getElementById('invoiceDetailsTable').addEventListener('input', function (e) {
+                if (e.target.matches('input[name$=".Quantity"], input[name$=".Price"]')) {
+                    calculateTotal(e.target.closest('tr'));
+                    updateTotalAmount();
+                }
+            });
+
+            // Add a new detail row
+            document.getElementById('addDetail').addEventListener('click', function () {
+                const tableBody = document.querySelector('#invoiceDetailsTable tbody');
+                const newRow = tableBody.insertRow();
+                newRow.innerHTML = `
+                                    <td>
+                                        <select name="InvoiceDetails[${detailIndex}].CategoryId" class="form-control">
+                                            <option value="">Select a category</option>
+                                        @foreach (var category in Model.Categories)
+                                        {
+                                             <option value="@category.Value">@category.Text</option>
+                                        }
+                                        </select>
+                                    </td>
+                                    <td><input type="number" name="InvoiceDetails[${detailIndex}].Quantity" class="form-control" /></td>
+                                    <td><input type="number" name="InvoiceDetails[${detailIndex}].Price" class="form-control" step="0.01" /></td>
+                                    <td><span class="invoice-detail-total">0.00</span></td>
+                                    <td><button type="button" class="btn btn-danger remove-detail">Remove</button></td>
+                                `;
+                detailIndex++;
+                updateTotalAmount();
+            });
+
+            // Remove a detail row
+            document.getElementById('invoiceDetailsTable').addEventListener('click', function (e) {
+                if (e.target.matches('.remove-detail')) {
+                    e.target.closest('tr').remove();
+                    updateTotalAmount();
+                }
+            });
+
+            // Initial update of total amount
+            updateTotalAmount();
+        });
+    </script>
+}

@@ -1,0 +1,63 @@
+﻿@model IEnumerable<InvoiceData.Entities.Client>
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <h1>Clients</h1>
+    <button class="btn btn-primary" onclick="toggleCreateCategoryForm()">Create New Client</button>
+
+    <div id="categoryTable">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Notes</th>
+                    <th>Operations</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model == null || !Model.Any())
+                {
+                    <tr>
+                        <td colspan="4" class="text-center">No categories available. Please add a new category.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var category in Model)
+                    {
+                        <tr>
+                            <td>@category.Id</td>
+                            <td>@category.Name</td>
+                            <td>@category.Notes</td>
+                            <td>
+                                <a href="@Url.Action("Edit", new { id = category.Id })" class="btn btn-warning">Edit</a>
+                                <form action="@Url.Action("Delete", new { id = category.Id })" method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+
+
+
+    <div id="createCategoryForm" style="display:none;">
+        @Html.Partial("Create", new InvoiceSystem.Models.CreateClientViewModel())
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="~/js/Categories.js" asp-append-version="true"></script>
+
+
+
+}
+
